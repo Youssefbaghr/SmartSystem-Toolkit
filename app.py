@@ -25,6 +25,27 @@ def validate_directory(directory):
         print(f"Directory '{directory}' already exists.")
         return True
 
+def open_application(app_name):
+    try:
+        if platform.system() == "Windows":
+            subprocess.Popen(["start", f"{app_name}.exe"], shell=True)
+        elif platform.system() == "Darwin":  # For macOS
+            subprocess.Popen(["open", "-a", app_name])
+        elif platform.system() == "Linux":  # For Linux-based systems
+            subprocess.Popen([app_name.lower()])
+        else:
+            print("Unsupported operating system.")
+            return False
+
+        time.sleep(5)  # Pause to allow the application to open
+        return True
+    except FileNotFoundError:
+        print(f"{app_name} not found or unable to open.")
+        return False
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return False
+
 def execute_command():
     command = input("Enter the system command to execute: ")
     try:
@@ -35,6 +56,24 @@ def execute_command():
     except subprocess.CalledProcessError as e:
         print(f"Command execution failed: {e.output}")
         return False
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return False
+
+def close_application(app_name):
+    try:
+        if platform.system() == "Windows":
+            subprocess.Popen(["taskkill", "/f", "/im", f"{app_name}.exe"], shell=True)
+        elif platform.system() == "Darwin":  # For macOS
+            subprocess.Popen(["pkill", "-f", app_name])
+        elif platform.system() == "Linux":  # For Linux-based systems
+            subprocess.Popen(["pkill", "-f", app_name.lower()])
+        else:
+            print("Unsupported operating system.")
+            return False
+
+        time.sleep(2)  # Pause to allow the application to close
+        return True
     except Exception as e:
         print(f"An error occurred: {e}")
         return False
